@@ -4,4 +4,6 @@ entries:
     composer: Erik Satie
     work: Trois Gymnopedies
     movement: No. 1
-    source_url: https://REPLACE-WITH-VERIFIED-PD-MUSICXML-URL/gymnopedie1.musicxml
+    # Public-domain MIDI from the Mutopia Project (no MusicXML is published there);
+    # MuseScore renders MIDI as well as MusicXML.
+    source_url: https://www.mutopiaproject.org/ftp/SatieE/gymnopedie_1/gymnopedie_1.mid

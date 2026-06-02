@@ -19,6 +19,10 @@ htmlcov/
 .frame-port
 frame-pid
 
+# Composer runtime output (rendered audio + fetched-score cache)
+.cache/
+/out/
+
 # OS / editor
 .DS_Store
 *.swp

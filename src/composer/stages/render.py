@@ -9,15 +9,23 @@ from composer.provenance import Provenance
 
 class RenderBackend(Protocol):
     name: str
+    # File suffix (with dot) of the audio the backend writes; the renderer infers
+    # the output format from it. The next stage (loudnorm) decodes any of these.
+    audio_suffix: str
 
     def is_available(self) -> bool: ...
     def supports(self, source_format: str) -> bool: ...
-    def render(self, score: Path, out_wav: Path, prov: Provenance) -> None: ...
+    def render(self, score: Path, out_audio: Path, prov: Provenance) -> None: ...
 
 
 class MuseScoreBackend:
     name = "musescore"
     formats = frozenset({"musicxml", "midi"})
+    # MuseScore 4 infers the export format from the output extension, but its
+    # uncompressed/lossless writers (.wav, .flac) are broken in current builds
+    # (they exit nonzero and write nothing) while .mp3/.ogg work. We render to
+    # MP3 and let the encode stage produce the final OGG.
+    audio_suffix = ".mp3"
 
     def __init__(self, config: Config):
         self.config = config
@@ -31,18 +39,20 @@ class MuseScoreBackend:
     def supports(self, source_format: str) -> bool:
         return source_format in self.formats
 
-    def render(self, score: Path, out_wav: Path, prov: Provenance) -> None:
+    def render(self, score: Path, out_audio: Path, prov: Provenance) -> None:
         binary = self._binary()
         if binary is None:
             raise RenderError("MuseScore (mscore) not found")
-        out_wav.parent.mkdir(parents=True, exist_ok=True)
-        tools.run([binary, "-o", str(out_wav), str(score)])
+        out_audio.parent.mkdir(parents=True, exist_ok=True)
+        tools.run([binary, "-o", str(out_audio), str(score)])
         prov.render_backend = self.name
 
 
 class FluidSynthBackend:
     name = "fluidsynth"
     formats = frozenset({"midi"})
+    # FluidSynth's -F renders a lossless WAV.
+    audio_suffix = ".wav"
 
     def __init__(self, config: Config):
         self.config = config
@@ -56,14 +66,14 @@ class FluidSynthBackend:
     def supports(self, source_format: str) -> bool:
         return source_format in self.formats
 
-    def render(self, score: Path, out_wav: Path, prov: Provenance) -> None:
+    def render(self, score: Path, out_audio: Path, prov: Provenance) -> None:
         binary = self._binary()
         if binary is None:
             raise RenderError("FluidSynth not found")
         if self.config.soundfont is None:
             raise RenderError("FluidSynth backend requires a soundfont (--soundfont)")
-        out_wav.parent.mkdir(parents=True, exist_ok=True)
-        tools.run([binary, "-ni", "-F", str(out_wav), str(self.config.soundfont), str(score)])
+        out_audio.parent.mkdir(parents=True, exist_ok=True)
+        tools.run([binary, "-ni", "-F", str(out_audio), str(self.config.soundfont), str(score)])
         prov.render_backend = self.name
         prov.soundfont = str(self.config.soundfont)
 
