@@ -36,7 +36,7 @@ def _stub_stages(monkeypatch, fail_titles=()):
         out_ogg.write_bytes(b"OGG")
         return out_ogg
 
-    def fake_tag(ogg_path, prov):
+    def fake_tag(path, prov, output_format):
         if prov.title in fail_titles:
             raise RuntimeError("boom")
 
@@ -59,6 +59,17 @@ def test_run_piece_produces_tagged_output(monkeypatch, tmp_path):
     assert result.provenance.tool_version == composer.__version__
     assert result.provenance.render_date is not None
     assert result.provenance.fetch_date is not None
+
+
+def test_output_format_drives_extension(monkeypatch, tmp_path):
+    _stub_stages(monkeypatch)
+    cfg = Config(out_dir=tmp_path / "out", cache_dir=tmp_path / "cache", output_format="mp3")
+    entry = PieceEntry(title="A", source_url="a.midi", loudness=-16.0)
+
+    result = pipeline.run_piece(entry, cfg)
+
+    assert result.ok
+    assert result.output_path.suffix == ".mp3"
 
 
 def test_run_isolates_failing_piece(monkeypatch, tmp_path):

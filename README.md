@@ -45,8 +45,14 @@ covered by a gated integration test.
 ```bash
 uv sync
 uv run composer render path/to/score.musicxml --out-dir out
-uv run composer render manifest.yaml --out-dir out   # batch
+uv run composer render manifest.yaml --out-dir out          # batch
+uv run composer render manifest.yaml --format mp3           # ogg (default) | mp3 | wav
 ```
+
+Output format (`--format`): **ogg** (default; open, royalty-free, small), **mp3**
+(smallest-with-universal-playback, including Safari/iOS), or **wav** (lossless
+master, ~12× larger). Provenance is embedded in all three — Vorbis comments for
+OGG, ID3 `TXXX` frames for MP3/WAV.
 
 ## Scope
 
