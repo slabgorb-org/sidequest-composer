@@ -54,6 +54,7 @@ def run_piece(entry: PieceEntry, config: Config) -> PieceResult:
     out_ogg = config.out_dir / f"{out_name}.ogg"
 
     score = UrlFetcher(config.cache_dir).fetch(entry.source_url, prov)
+    prov.fetch_date = _now()
     backend = select_backend(config, source_format=prov.score_format, forced=entry.backend)
     backend.render(score, raw_wav, prov)
     target = entry.loudness if entry.loudness is not None else config.loudness

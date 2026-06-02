@@ -57,6 +57,7 @@ def test_run_piece_produces_tagged_output(monkeypatch, tmp_path):
     assert result.output_path.suffix == ".ogg"
     assert result.provenance.tool_version == composer.__version__
     assert result.provenance.render_date is not None
+    assert result.provenance.fetch_date is not None
 
 
 def test_run_isolates_failing_piece(monkeypatch, tmp_path):

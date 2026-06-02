@@ -1,7 +1,10 @@
 import hashlib
 
+import pytest
+
+from composer.errors import FetchError
 from composer.provenance import Provenance
-from composer.stages.fetch import UrlFetcher
+from composer.stages.fetch import UrlFetcher, _format_for
 
 
 def test_fetches_and_caches_local_file(tmp_path):
@@ -33,3 +36,8 @@ def test_reuses_cache_on_second_fetch(tmp_path):
 
     assert first == second
     assert second.exists()
+
+
+def test_fetch_rejects_unsupported_extension():
+    with pytest.raises(FetchError):
+        _format_for("score.pdf")
