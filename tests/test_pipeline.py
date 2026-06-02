@@ -17,11 +17,12 @@ def _stub_stages(monkeypatch, fail_titles=()):
 
     class FakeBackend:
         name = "musescore"
+        audio_suffix = ".wav"
 
-        def render(self, score, out_wav, prov):
+        def render(self, score, out_audio, prov):
             prov.render_backend = "musescore"
-            out_wav.parent.mkdir(parents=True, exist_ok=True)
-            out_wav.write_bytes(b"WAV")
+            out_audio.parent.mkdir(parents=True, exist_ok=True)
+            out_audio.write_bytes(b"WAV")
 
     def fake_select(config, source_format, forced):
         return FakeBackend()

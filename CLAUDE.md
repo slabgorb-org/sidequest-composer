@@ -62,5 +62,12 @@ without libvorbis (required for OGG Vorbis output), so the tool always uses the
 bundled, libvorbis-capable static build (fetched once, then offline).
 
 The Gymnopedie smoke test lives in `tests/test_integration_gymnopedie.py`
-(gated on MuseScore 4 being installed; it also needs a real PD MusicXML URL
-filled into `tests/data/gymnopedie.manifest.yaml`).
+(gated on MuseScore 4 being installed; it renders the public-domain MIDI wired
+into `tests/data/gymnopedie.manifest.yaml` from the Mutopia Project). The "first
+win" runs end-to-end: `composer render tests/data/gymnopedie.manifest.yaml`
+produces a tagged OGG.
+
+Note: MuseScore 4's CLI cannot reliably write WAV/FLAC (it exits nonzero and
+writes nothing), so `MuseScoreBackend` renders to MP3 and the encode stage
+produces the final OGG; FluidSynth renders WAV. Each backend declares its
+`audio_suffix`.

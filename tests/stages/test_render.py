@@ -10,6 +10,13 @@ from composer.stages import render
 from composer.stages.render import MuseScoreBackend, FluidSynthBackend, select_backend
 
 
+def test_backends_declare_producible_audio_suffix():
+    # MuseScore 4 cannot write WAV/FLAC reliably, so it renders compressed audio;
+    # FluidSynth writes WAV. The pipeline names the raw render file accordingly.
+    assert MuseScoreBackend(Config()).audio_suffix == ".mp3"
+    assert FluidSynthBackend(Config()).audio_suffix == ".wav"
+
+
 def test_musescore_builds_correct_command(monkeypatch, tmp_path):
     calls = []
     monkeypatch.setattr(tools, "discover", lambda c: "/bin/mscore")
