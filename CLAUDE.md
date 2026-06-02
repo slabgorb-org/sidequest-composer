@@ -52,4 +52,15 @@ The constraint *is* the design. Keep it small: notation in, audio out.
 
 ## Status
 
-Greenfield — no implementation code committed yet. This document describes intended architecture; update it as real commands, module layout, and test instructions land.
+Vertical slice implemented. Module layout under `src/composer/` (stages in
+`src/composer/stages/`). Install with `uv sync`; run tests with `uv run pytest`;
+render with `uv run composer render <manifest|score|url> [--out-dir ...]`.
+
+ffmpeg/ffprobe are bundled via the `static-ffmpeg` dependency and resolved by
+`composer.tools.resolve_ffmpeg_tools()` — a system ffmpeg may be compiled
+without libvorbis (required for OGG Vorbis output), so the tool always uses the
+bundled, libvorbis-capable static build (fetched once, then offline).
+
+The Gymnopedie smoke test lives in `tests/test_integration_gymnopedie.py`
+(gated on MuseScore 4 being installed; it also needs a real PD MusicXML URL
+filled into `tests/data/gymnopedie.manifest.yaml`).

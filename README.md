@@ -30,13 +30,23 @@ These are external CLI tools the project drives as subprocesses:
 |------|------|
 | [MuseScore 4](https://musescore.org) (`mscore`) | Primary render backend — `mscore -o out.wav in.musicxml` |
 | [FluidSynth](https://www.fluidsynth.org) + SoundFont (`.sf2`) | Alternative / fallback render backend |
-| [ffmpeg](https://ffmpeg.org) | Loudness normalization (`loudnorm`) and OGG/WAV export |
+| [ffmpeg](https://ffmpeg.org) | Loudness normalization (`loudnorm`) and OGG/WAV export — bundled via `static-ffmpeg` (libvorbis-capable; no system install needed) |
 
 Score sources: [IMSLP](https://imslp.org), [Mutopia Project](https://www.mutopiaproject.org).
 
 ## Status
 
-🚧 Early development. The first milestone: render Satie's *Gymnopédie No. 1* from a Mutopia MusicXML to a tagged OGG in one command.
+🚧 Early development — single-piece and batch rendering work. First milestone
+(render Satie's *Gymnopédie No. 1* to a tagged OGG in one command) is wired and
+covered by a gated integration test.
+
+## Usage
+
+```bash
+uv sync
+uv run composer render path/to/score.musicxml --out-dir out
+uv run composer render manifest.yaml --out-dir out   # batch
+```
 
 ## Scope
 
