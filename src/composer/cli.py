@@ -6,6 +6,7 @@ import typer
 from composer.config import Config
 from composer.manifest import from_input
 from composer.pipeline import run
+from composer.stages.encode import SUPPORTED_FORMATS
 from composer.tools import resolve_ffmpeg_tools
 
 app = typer.Typer(add_completion=False, help="Render public-domain notation into tagged audio.")
@@ -23,10 +24,22 @@ def render(
     backend: Optional[str] = typer.Option(None, "--backend", help="Force musescore|fluidsynth."),
     loudness: Optional[float] = typer.Option(None, "--loudness", help="Integrated LUFS target."),
     soundfont: Optional[Path] = typer.Option(None, "--soundfont", help="SoundFont for FluidSynth."),
+    output_format: str = typer.Option(
+        "ogg", "--format", help="Output audio format: ogg|mp3|wav."
+    ),
 ) -> None:
+    if output_format not in SUPPORTED_FORMATS:
+        typer.echo(f"unknown --format {output_format!r} (choose {'|'.join(SUPPORTED_FORMATS)})")
+        raise typer.Exit(code=2)
     manifest = from_input(input)
     ffmpeg, ffprobe = resolve_ffmpeg_tools()
-    config = Config(out_dir=out_dir, soundfont=soundfont, ffmpeg=ffmpeg, ffprobe=ffprobe)
+    config = Config(
+        out_dir=out_dir,
+        soundfont=soundfont,
+        ffmpeg=ffmpeg,
+        ffprobe=ffprobe,
+        output_format=output_format,
+    )
     if loudness is not None:
         config.loudness = loudness
     if backend is not None:

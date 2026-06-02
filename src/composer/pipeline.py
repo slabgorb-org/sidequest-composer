@@ -50,7 +50,7 @@ def run_piece(entry: PieceEntry, config: Config) -> PieceResult:
     work_dir = config.out_dir / "_work"
     out_name = entry.out_name or entry.title
     norm_wav = work_dir / f"{out_name}.norm.wav"
-    out_ogg = config.out_dir / f"{out_name}.ogg"
+    out_path = config.out_dir / f"{out_name}.{config.output_format}"
 
     score = UrlFetcher(config.cache_dir).fetch(entry.source_url, prov)
     prov.fetch_date = _now()
@@ -59,13 +59,13 @@ def run_piece(entry: PieceEntry, config: Config) -> PieceResult:
     backend.render(score, raw_audio, prov)
     target = entry.loudness if entry.loudness is not None else config.loudness
     normalize(raw_audio, norm_wav, target_lufs=target, config=config, prov=prov)
-    encode(norm_wav, out_ogg, config)
+    encode(norm_wav, out_path, config)
 
     prov.tool_version = composer.__version__
     prov.render_date = _now()
-    tag(out_ogg, prov)
+    tag(out_path, prov, config.output_format)
 
-    return PieceResult(title=entry.title, ok=True, output_path=out_ogg, provenance=prov)
+    return PieceResult(title=entry.title, ok=True, output_path=out_path, provenance=prov)
 
 
 def run(manifest: Manifest, config: Config) -> Report:
