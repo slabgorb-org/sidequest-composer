@@ -52,4 +52,22 @@ The constraint *is* the design. Keep it small: notation in, audio out.
 
 ## Status
 
-Greenfield — no implementation code committed yet. This document describes intended architecture; update it as real commands, module layout, and test instructions land.
+Vertical slice implemented. Module layout under `src/composer/` (stages in
+`src/composer/stages/`). Install with `uv sync`; run tests with `uv run pytest`;
+render with `uv run composer render <manifest|score|url> [--out-dir ...]`.
+
+ffmpeg/ffprobe are bundled via the `static-ffmpeg` dependency and resolved by
+`composer.tools.resolve_ffmpeg_tools()` — a system ffmpeg may be compiled
+without libvorbis (required for OGG Vorbis output), so the tool always uses the
+bundled, libvorbis-capable static build (fetched once, then offline).
+
+The Gymnopedie smoke test lives in `tests/test_integration_gymnopedie.py`
+(gated on MuseScore 4 being installed; it renders the public-domain MIDI wired
+into `tests/data/gymnopedie.manifest.yaml` from the Mutopia Project). The "first
+win" runs end-to-end: `composer render tests/data/gymnopedie.manifest.yaml`
+produces a tagged OGG.
+
+Note: MuseScore 4's CLI cannot reliably write WAV/FLAC (it exits nonzero and
+writes nothing), so `MuseScoreBackend` renders to MP3 and the encode stage
+produces the final OGG; FluidSynth renders WAV. Each backend declares its
+`audio_suffix`.

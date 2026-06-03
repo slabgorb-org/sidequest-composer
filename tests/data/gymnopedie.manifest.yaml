@@ -1,0 +1,9 @@
+loudness: -16
+entries:
+  - title: Gymnopedie No. 1
+    composer: Erik Satie
+    work: Trois Gymnopedies
+    movement: No. 1
+    # Public-domain MIDI from the Mutopia Project (no MusicXML is published there);
+    # MuseScore renders MIDI as well as MusicXML.
+    source_url: https://www.mutopiaproject.org/ftp/SatieE/gymnopedie_1/gymnopedie_1.mid
