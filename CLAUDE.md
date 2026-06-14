@@ -15,7 +15,7 @@ The whole tool is one data flow. Understanding it is understanding the codebase:
 ```
 piece list / manifest  ──►  fetch PD score        (IMSLP / Mutopia)   ─┐
 MusicXML / MIDI file   ──►  (or take user's file)                      ├─►  render audio   ──►  normalize loudness  ──►  tag + export
-                                                                       ┘    (MuseScore 4 CLI    (ffmpeg / loudnorm)     (OGG/WAV w/ provenance)
+                                                                       ┘    (MuseScore 4 CLI    (ffmpeg / loudnorm)     (OGG/MP3/WAV w/ provenance)
                                                                              or FluidSynth+SF2)
 ```
 
@@ -47,7 +47,7 @@ The constraint *is* the design. Keep it small: notation in, audio out.
 ## Priorities
 
 - **Solo piano renders beautifully; orchestral is "serviceable at background volume."** Lead with and prioritize piano repertoire — that's where the demo sings.
-- **First win / smoke test of the whole thesis:** render Satie's Gymnopédie No. 1 from a Mutopia MusicXML to a tagged OGG in **one command**. If that works end-to-end, the architecture is sound.
+- **First win / smoke test of the whole thesis:** render Satie's Gymnopédie No. 1 from a Mutopia score (public-domain MIDI — Mutopia publishes no MusicXML for it; MuseScore renders MIDI too) to a tagged OGG in **one command**. If that works end-to-end, the architecture is sound.
 - **Batch mode** is a first-class path: feed a manifest, get a folder of named tracks. Single-file rendering is the degenerate case of batch.
 
 ## Status
